@@ -1,0 +1,28 @@
+services:
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      #- "--experimental.plugins.lottery.modulename=github.com/ystkfujii/traefik-plugin-fortune"
+      #- "--experimental.plugins.lottery.version=v0.0.1"
+      - "--experimental.localPlugins.lottery.moduleName=github.com/ystkfujii/traefik-plugin-fortune"
+    ports:
+      - "80:80"
+    volumes:
+      - ".:/plugins-local/src/github.com/ystkfujii/traefik-plugin-fortune"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=PathPrefix(`/who`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.middlewares=my-plugin"
+      - "traefik.http.middlewares.my-plugin.plugin.lottery.Rate=30"

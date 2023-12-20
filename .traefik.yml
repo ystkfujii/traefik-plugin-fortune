@@ -1,0 +1,7 @@
+displayName: Lottery Plugin
+type: middleware
+import: github.com/ystkfujii/traefik-plugin-fortune
+summary: 'Add Lottery Header'
+
+testData:
+  unused: var
